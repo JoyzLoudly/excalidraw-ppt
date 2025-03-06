@@ -1,13 +1,15 @@
-import React, { useEffect, useState } from 'react'
-import Excalidraw from 'excalidraw'
-import 'excalidraw/dist/excalidraw.min.css'
+import React, { useEffect, useState } from 'react';
+import {Excalidraw} from '@excalidraw/excalidraw';
+import { ExcalidrawElement } from "@excalidraw/excalidraw/types/element/types";
+import { AppState, BinaryFiles } from "@excalidraw/excalidraw/types/types";
+// import 'excalidraw/dist/excalidraw.min.css'
 import { Slide } from './types'
 
 export interface Props {
   slide: Slide
   editMode: boolean
   onSlideChange: (elements: any[]) => void
-}
+} 
 
 const sameElement = (el1: any, el2: any) => {
   const {
@@ -25,17 +27,16 @@ const sameElement = (el1: any, el2: any) => {
   return JSON.stringify(el1Attributes) === JSON.stringify(el2Attributes)
 }
 
-const sameElements = (elements1: any[], elements2: any[]) =>
+const sameElements = (elements1: readonly ExcalidrawElement[], elements2: readonly ExcalidrawElement[]) =>
   elements1.length === elements2.length &&
   elements1.every((el, index) => sameElement(el, elements2[index]))
 
 export const SlideEditor = ({ slide, editMode, onSlideChange }: Props) => {
   const [initialElements, setInitialElements] = useState(slide.elements)
-
-  const onChange = (elements: any[]) => {
+  const onChange = (elements: readonly ExcalidrawElement[], appState: AppState, files: BinaryFiles) => {
     if (!sameElements(elements, initialElements)) {
-      onSlideChange(elements)
-      setInitialElements(JSON.parse(JSON.stringify(elements)))
+      onSlideChange([...elements])
+      setInitialElements([...elements])
     }
   }
 
@@ -82,9 +83,9 @@ export const SlideEditor = ({ slide, editMode, onSlideChange }: Props) => {
         `}
       </style>
       <Excalidraw
-        width={dimensions.width}
-        height={dimensions.height}
-        initialData={slide.elements}
+        // width={dimensions.width}
+        // height={dimensions.height}
+        initialData={{ elements: slide.elements, appState: {} }}
         onChange={onChange}
       />
     </div>
